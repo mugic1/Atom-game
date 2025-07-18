@@ -4,7 +4,8 @@ const urlsToCache = [
     './', // Caches the root URL (index.html)
     './index.html',
     './manifest.json',
-    'https://cdn.tailwindcss.com' // Cache Tailwind CSS CDN
+    './img-192x192.png',
+    './img-512x512.png',
     // Add any other assets like images, fonts if you had them
 ];
 
