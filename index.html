@@ -3,588 +3,505 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atomic Elements Learning Game</title>
+    <title>Atomic Challenge: Type & Match</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Custom styles for better aesthetics and responsiveness */
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f8ff;
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             margin: 0;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #333;
+            box-sizing: border-box;
         }
-        
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        
         .game-container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 90%;
-            max-width: 600px;
-            margin-bottom: 20px;
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        
-        .question {
-            font-size: 24px;
-            margin-bottom: 20px;
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            padding: 2rem;
+            width: 100%;
+            max-width: 600px; /* Max width for larger screens */
             text-align: center;
-            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; /* Space between sections */
+        }
+        input[type="text"] {
+            padding: 0.75rem 1rem;
+            border: 2px solid #cbd5e1; /* Light gray border */
+            border-radius: 0.75rem; /* Rounded input fields */
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1.25rem; /* Larger font for input */
+            text-align: center;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #6366f1; /* Indigo focus color */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); /* Soft focus shadow */
+        }
+        button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        .btn-primary {
+            background-color: #6366f1; /* Indigo */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4f46e5; /* Darker indigo */
+        }
+        .btn-secondary {
+            background-color: #e2e8f0; /* Light gray */
+            color: #475569; /* Slate gray */
+        }
+        .btn-secondary:hover {
+            background-color: #cbd5e1; /* Darker light gray */
+        }
+        .feedback-message {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        .feedback-correct {
+            background-color: #d1fae5; /* Light green */
+            color: #065f46; /* Dark green */
+        }
+        .feedback-incorrect {
+            background-color: #fee2e2; /* Light red */
+            color: #991b1b; /* Dark red */
+        }
+        .hidden {
+            display: none !important;
+        }
+        .question-display {
+            background-color: #e0e7ff; /* Light indigo background */
+            padding: 1.5rem;
+            border-radius: 1rem;
+            font-size: 1.8rem; /* Larger question text */
+            font-weight: bold;
+            color: #312e81; /* Darker indigo text */
+            min-height: 100px; /* Ensure consistent height */
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        
-        .options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .option {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .option:hover {
-            background-color: #2980b9;
-        }
-        
-        .feedback {
-            text-align: center;
-            min-height: 30px;
+        .timer-display {
+            font-size: 1.5rem;
             font-weight: bold;
-            margin-bottom: 20px;
+            color: #ef4444; /* Red for timer */
         }
-        
-        .correct {
-            color: #27ae60;
+        .study-table th, .study-table td {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
         }
-        
-        .incorrect {
-            color: #e74c3c;
+        .study-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #475569;
         }
-        
-        .next-btn {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            display: block;
-            margin: 0 auto;
-            transition: background-color 0.3s;
+        .study-table tbody tr:nth-child(odd) {
+            background-color: #f8fafc;
         }
-        
-        .next-btn:hover {
-            background-color: #27ae60;
-        }
-        
-        .next-btn:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-        }
-        
-        .progress-container {
+        .study-table {
             width: 100%;
-            background-color: #ecf0f1;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.9rem;
         }
-        
-        .progress-bar {
-            height: 10px;
-            background-color: #3498db;
-            border-radius: 5px;
-            width: 0%;
-            transition: width 0.5s;
-        }
-        
-        .element-info {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            border-left: 5px solid #3498db;
-        }
-        
-        .mode-selector {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .mode-btn {
-            padding: 8px 15px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        
-        .mode-btn.active {
-            background-color: #2980b9;
-            font-weight: bold;
-        }
-        
-        .periodic-table-container {
-            width: 100%;
-            overflow-x: auto;
-        }
-        
-        .periodic-table {
-            display: grid;
-            grid-template-columns: repeat(18, minmax(30px, 1fr));
-            gap: 3px;
-            margin-top: 20px;
-            min-width: 540px; /* Minimum width for 18 columns */
-        }
-        
-        .element {
-            padding: 5px;
-            text-align: center;
-            border-radius: 3px;
-            background-color: #e0f7fa;
-            cursor: pointer;
-            transition: transform 0.2s;
-            min-height: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .element:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 5px rgba(0,0,0,0.2);
-        }
-        
-        .element .symbol {
-            font-weight: bold;
-            font-size: 1em;
-            line-height: 1.2;
-        }
-        
-        .element .number {
-            font-size: 0.6em;
-            line-height: 1.2;
-        }
-        
-        .element .name {
-            font-size: 0.5em;
-            line-height: 1.2;
-            display: none; /* Hidden by default, shown on larger screens */
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
         /* Responsive adjustments */
-        @media (min-width: 768px) {
-            .element .name {
-                display: block;
-            }
-            .element {
-                min-height: 60px;
-            }
-        }
-        
-        @media (max-width: 767px) {
-            .options {
-                grid-template-columns: 1fr;
-            }
-            .periodic-table {
-                grid-template-columns: repeat(18, minmax(25px, 1fr));
-                font-size: 0.9em;
-            }
-        }
-        
-        @media (max-width: 480px) {
+        @media (max-width: 640px) {
             .game-container {
-                padding: 15px;
+                padding: 1rem;
+                border-radius: 1rem;
             }
-            .question {
-                font-size: 20px;
+            .question-display {
+                font-size: 1.4rem;
+                padding: 1rem;
             }
-            .periodic-table {
-                grid-template-columns: repeat(18, minmax(20px, 1fr));
-                font-size: 0.8em;
+            input[type="text"] {
+                font-size: 1rem;
+            }
+            button {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+            .flex-col.sm:flex-row {
+                flex-direction: column;
+            }
+            .study-table th, .study-table td {
+                padding: 0.5rem;
+                font-size: 0.8rem;
             }
         }
     </style>
 </head>
-<body>
-    <h1>Atomic Elements Learning Game</h1>
-    
-    <div class="mode-selector">
-        <button class="mode-btn active" data-mode="quiz">Quiz Mode</button>
-        <button class="mode-btn" data-mode="table">Periodic Table</button>
-        <button class="mode-btn" data-mode="study">Study Mode</button>
-    </div>
-    
-    <div id="quiz-container" class="game-container">
-        <div class="stats">
-            <div>Score: <span id="score">0</span></div>
-            <div>Question: <span id="question-count">0</span>/30</div>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="game-container" class="game-container">
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-4">Atomic Challenge: Type & Match!</h1>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="flex flex-col items-center gap-6">
+            <p class="text-lg text-gray-600">Quickly type the correct atomic property for the given element!</p>
+            <p class="text-md text-gray-500">You have 60 seconds to answer as many as you can.</p>
+            <div class="flex flex-col sm:flex-row gap-4 w-full max-w-xs">
+                <button id="start-game-btn" class="btn-primary flex-1">Start Game</button>
+                <button id="study-btn-start" class="btn-secondary flex-1">Study</button>
+            </div>
         </div>
-        
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
+
+        <!-- Game Play Screen -->
+        <div id="game-play-screen" class="hidden flex-col gap-4">
+            <div class="flex justify-between items-center mb-4">
+                <div class="text-lg font-medium text-gray-700">
+                    Score: <span id="score" class="text-indigo-600 font-bold">0</span>
+                </div>
+                <div class="timer-display">
+                    Time: <span id="timer">60</span>s
+                </div>
+            </div>
+
+            <div id="question-display" class="question-display">
+                <!-- Question will be dynamically inserted here -->
+            </div>
+
+            <div>
+                <label for="user-input" class="sr-only">Your Answer:</label>
+                <input type="text" id="user-input" placeholder="Type your answer here..." autocomplete="off">
+            </div>
+
+            <div id="feedback-message" class="feedback-message hidden"></div>
+
+            <div class="flex flex-col sm:flex-row gap-4 mt-4">
+                <!-- Check button removed, auto-check on Enter -->
+                <button id="next-btn" class="btn-primary flex-1">Next Element</button>
+            </div>
         </div>
-        
-        <div class="question" id="question"></div>
-        
-        <div class="options" id="options"></div>
-        
-        <div class="feedback" id="feedback"></div>
-        
-        <button class="next-btn" id="next-btn" disabled>Next Question</button>
-        
-        <div class="element-info hidden" id="element-info"></div>
-    </div>
-    
-    <div id="periodic-table-container" class="game-container hidden">
-        <h2>Periodic Table (First 30 Elements)</h2>
-        <div class="periodic-table-container">
-            <div class="periodic-table" id="periodic-table"></div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="hidden flex-col gap-4">
+            <h2 class="text-2xl font-bold text-gray-800">Time's Up!</h2>
+            <p class="text-lg text-gray-600">Let's see how well you did!</p>
+            <p class="text-xl font-bold text-gray-700">Your Final Score: <span id="final-score" class="text-indigo-600">0</span> points</p>
+            <div class="flex flex-col sm:flex-row gap-4 w-full max-w-xs mt-4">
+                <button id="play-again-btn" class="btn-primary flex-1">Play Again</button>
+                <button id="study-btn-gameover" class="btn-secondary flex-1">Study</button>
+            </div>
         </div>
-        <div class="element-info" id="table-element-info"></div>
+
+        <!-- Study Screen -->
+        <div id="study-screen" class="hidden flex-col gap-4">
+            <h2 class="text-2xl font-bold text-gray-800">Study Elements</h2>
+            <div class="overflow-x-auto">
+                <table class="study-table w-full text-left">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Symbol</th>
+                            <th>Number</th>
+                            <th>Mass</th>
+                        </tr>
+                    </thead>
+                    <tbody id="study-table-body">
+                        <!-- Elements will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            <button id="back-to-main-btn" class="btn-primary w-full max-w-xs mt-4">Back to Main Menu</button>
+        </div>
     </div>
-    
-    <div id="study-container" class="game-container hidden">
-        <h2>Study Mode</h2>
-        <div id="study-elements"></div>
-    </div>
-    
+
     <script>
-        // Elements data (Hydrogen to Zinc) with rounded masses for quiz
+        // Array containing data for the first 30 elements (Hydrogen to Zinc)
+        // Atomic masses are rounded to the nearest whole number as requested.
         const elements = [
-            { number: 1, symbol: "H", name: "Hydrogen", mass:  1 },
-            { number: 2, symbol: "He", name: "Helium", mass:  4 },
-            { number: 3, symbol: "Li", name: "Lithium", mass:  7 },
-            { number: 4, symbol: "Be", name: "Beryllium", mass:  9 },
-            { number: 5, symbol: "B", name: "Boron", mass:  11 },
-            { number: 6, symbol: "C", name: "Carbon", mass:  12 },
-            { number: 7, symbol: "N", name: "Nitrogen", mass:  14 },
-            { number: 8, symbol: "O", name: "Oxygen", mass:  16 },
-            { number: 9, symbol: "F", name: "Fluorine", mass:  19 },
-            { number: 10, symbol: "Ne", name: "Neon", mass:  20 },
-            { number: 11, symbol: "Na", name: "Sodium", mass:  23 },
-            { number: 12, symbol: "Mg", name: "Magnesium", mass:  24 },
-            { number: 13, symbol: "Al", name: "Aluminum", mass:  27 },
-            { number: 14, symbol: "Si", name: "Silicon", mass:  28 },
-            { number: 15, symbol: "P", name: "Phosphorus", mass:  31 },
-            { number: 16, symbol: "S", name: "Sulfur", mass:  32 },
-            { number: 17, symbol: "Cl", name: "Chlorine", mass:  35 },
-            { number: 18, symbol: "Ar", name: "Argon", mass:  40 },
-            { number: 19, symbol: "K", name: "Potassium", mass:  39 },
-            { number: 20, symbol: "Ca", name: "Calcium", mass:  40 },
-            { number: 21, symbol: "Sc", name: "Scandium", mass:  45 },
-            { number: 22, symbol: "Ti", name: "Titanium", mass:  48 },
-            { number: 23, symbol: "V", name: "Vanadium", mass:  51 },
-            { number: 24, symbol: "Cr", name: "Chromium", mass:  52 },
-            { number: 25, symbol: "Mn", name: "Manganese", mass:  55 },
-            { number: 26, symbol: "Fe", name: "Iron", mass:  56 },
-            { number: 27, symbol: "Co", name: "Cobalt", mass:  59 },
-            { number: 28, symbol: "Ni", name: "Nickel", mass:  59 },
-            { number: 29, symbol: "Cu", name: "Copper", mass:  64 },
-            { number: 30, symbol: "Zn", name: "Zinc", mass:  65 }
+            { name: "Hydrogen", symbol: "H", number: 1, mass: 1 },
+            { name: "Helium", symbol: "He", number: 2, mass: 4 },
+            { name: "Lithium", symbol: "Li", number: 3, mass: 7 },
+            { name: "Beryllium", symbol: "Be", number: 4, mass: 9 },
+            { name: "Boron", symbol: "B", number: 5, mass: 11 },
+            { name: "Carbon", symbol: "C", number: 6, mass: 12 },
+            { name: "Nitrogen", symbol: "N", number: 7, mass: 14 },
+            { name: "Oxygen", symbol: "O", number: 8, mass: 16 },
+            { name: "Fluorine", symbol: "F", number: 9, mass: 19 },
+            { name: "Neon", symbol: "Ne", number: 10, mass: 20 },
+            { name: "Sodium", symbol: "Na", number: 11, mass: 23 },
+            { name: "Magnesium", symbol: "Mg", number: 12, mass: 24 },
+            { name: "Aluminum", symbol: "Al", number: 13, mass: 27 },
+            { name: "Silicon", symbol: "Si", number: 14, mass: 28 },
+            { name: "Phosphorus", symbol: "P", number: 15, mass: 31 },
+            { name: "Sulfur", symbol: "S", number: 16, mass: 32 },
+            { name: "Chlorine", symbol: "Cl", number: 17, mass: 35 },
+            { name: "Argon", symbol: "Ar", number: 18, mass: 40 },
+            { name: "Potassium", symbol: "K", number: 19, mass: 39 },
+            { name: "Calcium", symbol: "Ca", number: 20, mass: 40 },
+            { name: "Scandium", symbol: "Sc", number: 21, mass: 45 },
+            { name: "Titanium", symbol: "Ti", number: 22, mass: 48 },
+            { name: "Vanadium", symbol: "V", number: 23, mass: 51 },
+            { name: "Chromium", symbol: "Cr", number: 24, mass: 52 },
+            { name: "Manganese", symbol: "Mn", number: 25, mass: 55 },
+            { name: "Iron", symbol: "Fe", number: 26, mass: 56 },
+            { name: "Cobalt", symbol: "Co", number: 27, mass: 59 },
+            { name: "Nickel", symbol: "Ni", number: 28, mass: 59 },
+            { name: "Copper", symbol: "Cu", number: 29, mass: 64 },
+            { name: "Zinc", symbol: "Zn", number: 30, mass: 65 }
         ];
-        
-        // Game state
-        let currentElement = null;
-        let score = 0;
-        let questionCount = 0;
-        let currentMode = "quiz";
-        
-        // DOM elements
-        const quizContainer = document.getElementById('quiz-container');
-        const periodicTableContainer = document.getElementById('periodic-table-container');
-        const studyContainer = document.getElementById('study-container');
-        const questionElement = document.getElementById('question');
-        const optionsElement = document.getElementById('options');
-        const feedbackElement = document.getElementById('feedback');
+
+        // DOM Elements
+        const startScreen = document.getElementById('start-screen');
+        const gamePlayScreen = document.getElementById('game-play-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const studyScreen = document.getElementById('study-screen'); // New study screen
+        const startButton = document.getElementById('start-game-btn');
+        const studyButtonStart = document.getElementById('study-btn-start'); // New study button on start screen
+        const questionDisplay = document.getElementById('question-display');
+        const userInput = document.getElementById('user-input');
         const nextButton = document.getElementById('next-btn');
-        const scoreElement = document.getElementById('score');
-        const questionCountElement = document.getElementById('question-count');
-        const progressBar = document.getElementById('progress-bar');
-        const elementInfo = document.getElementById('element-info');
-        const tableElementInfo = document.getElementById('table-element-info');
-        const studyElements = document.getElementById('study-elements');
-        const modeButtons = document.querySelectorAll('.mode-btn');
-        
-        // Initialize the game
-        function init() {
-            setupModeSwitcher();
-            setupQuiz();
-            setupPeriodicTable();
-            setupStudyMode();
-        }
-        
-        // Set up mode switching
-        function setupModeSwitcher() {
-            modeButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    currentMode = button.dataset.mode;
-                    
-                    // Update active button
-                    modeButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    
-                    // Show the correct container
-                    quizContainer.classList.add('hidden');
-                    periodicTableContainer.classList.add('hidden');
-                    studyContainer.classList.add('hidden');
-                    
-                    if (currentMode === 'quiz') {
-                        quizContainer.classList.remove('hidden');
-                    } else if (currentMode === 'table') {
-                        periodicTableContainer.classList.remove('hidden');
-                    } else if (currentMode === 'study') {
-                        studyContainer.classList.remove('hidden');
-                    }
-                });
-            });
-        }
-        
-        // Set up the quiz game
-        function setupQuiz() {
-            nextButton.addEventListener('click', nextQuestion);
-            nextQuestion();
-        }
-        
-        // Set up the periodic table view
-        function setupPeriodicTable() {
-            const periodicTable = document.getElementById('periodic-table');
-            periodicTable.innerHTML = '';
-            
-            // Create cells for all 118 elements, but only fill the first 30
-            for (let i = 0; i < 118; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'element';
-                
-                if (i < elements.length) {
-                    const element = elements[i];
-                    cell.innerHTML = `
-                        <div class="number">${element.number}</div>
-                        <div class="symbol">${element.symbol}</div>
-                        <div class="name">${element.name}</div>
-                    `;
-                    
-                    cell.addEventListener('click', () => {
-                        showElementInfo(element, tableElementInfo);
-                    });
-                } else {
-                    cell.style.visibility = 'hidden';
-                }
-                
-                periodicTable.appendChild(cell);
-            }
-        }
-        
-        // Set up study mode
-        function setupStudyMode() {
-            studyElements.innerHTML = '';
-            
-            elements.forEach(element => {
-                const elementCard = document.createElement('div');
-                elementCard.className = 'element-info';
-                elementCard.style.marginBottom = '15px';
-                elementCard.innerHTML = `
-                    <h3>${element.number}. ${element.name} (${element.symbol})</h3>
-                    <p><strong>Atomic Mass:</strong> ${element.mass} (rounded: ${element.roundedMass})</p>
-                `;
-                studyElements.appendChild(elementCard);
-            });
-        }
-        
-        // Show element information
-        function showElementInfo(element, container) {
-            container.innerHTML = `
-                <h3>${element.number}. ${element.name} (${element.symbol})</h3>
-                <p><strong>Atomic Mass:</strong> ${element.mass} (rounded: ${element.roundedMass})</p>
-                <p><strong>Atomic Number:</strong> ${element.number}</p>
-                <p><strong>Symbol:</strong> ${element.symbol}</p>
-            `;
-        }
-        
-        // Generate a new question
-        function nextQuestion() {
-            if (questionCount >= 30) {
-                // End of quiz
-                questionElement.textContent = `Quiz Complete! Your score: ${score}/30`;
-                optionsElement.innerHTML = '';
-                nextButton.disabled = true;
-                elementInfo.classList.add('hidden');
-                return;
-            }
-            
-            questionCount++;
-            questionCountElement.textContent = questionCount;
-            progressBar.style.width = `${(questionCount / 30) * 100}%`;
-            
-            // Reset UI
-            feedbackElement.textContent = '';
-            feedbackElement.className = 'feedback';
-            nextButton.disabled = true;
-            elementInfo.classList.add('hidden');
-            
-            // Randomly select a question type
-            const questionType = Math.floor(Math.random() * 3);
-            
-            // Select a random element
-            currentElement = elements[Math.floor(Math.random() * elements.length)];
-            
-            // Generate question and options based on type
-            if (questionType === 0) {
-                // Ask for atomic number
-                questionElement.textContent = `What is the atomic number of ${currentElement.name}?`;
-                generateOptions('number');
-            } else if (questionType === 1) {
-                // Ask for symbol
-                questionElement.textContent = `What is the atomic symbol of ${currentElement.name}?`;
-                generateOptions('symbol');
-            } else {
-                // Ask for atomic mass (using rounded mass)
-                questionElement.textContent = `What is the atomic mass of ${currentElement.name}? (rounded)`;
-                generateOptions('roundedMass');
-            }
-        }
-        
-        // Generate answer options
-        function generateOptions(property) {
-            optionsElement.innerHTML = '';
-            
-            // Create an array with the correct answer and 3 random incorrect answers
-            const correctAnswer = currentElement[property];
-            let options = [correctAnswer];
-            
-            // For numbers, generate nearby numbers
-            if (property === 'number') {
-                while (options.length < 4) {
-                    const randomOffset = Math.floor(Math.random() * 5) + 1;
-                    const randomSign = Math.random() < 0.5 ? -1 : 1;
-                    const option = currentElement.number + (randomOffset * randomSign);
-                    
-                    if (option > 0 && option <= 30 && !options.includes(option)) {
-                        options.push(option);
-                    }
-                }
-            } 
-            // For masses, generate similar masses
-            else if (property === 'roundedMass') {
-                while (options.length < 4) {
-                    const randomElement = elements[Math.floor(Math.random() * elements.length)];
-                    if (!options.includes(randomElement.roundedMass)) {
-                        options.push(randomElement.roundedMass);
-                    }
-                }
-            } 
-            // For symbols, use symbols of nearby elements
-            else {
-                while (options.length < 4) {
-                    const randomElement = elements[Math.floor(Math.random() * elements.length)];
-                    if (!options.includes(randomElement.symbol)) {
-                        options.push(randomElement.symbol);
-                    }
-                }
-            }
-            
-            // Shuffle the options
-            options = shuffleArray(options);
-            
-            // Create buttons for each option
-            options.forEach(option => {
-                const button = document.createElement('button');
-                button.className = 'option';
-                button.textContent = option;
-                
-                button.addEventListener('click', () => {
-                    checkAnswer(option, property);
-                });
-                
-                optionsElement.appendChild(button);
-            });
-        }
-        
-        // Check the selected answer
-        function checkAnswer(selectedOption, property) {
-            const correctAnswer = currentElement[property];
-            const isCorrect = selectedOption == correctAnswer; // Use == for loose comparison (numbers vs strings)
-            
-            // Disable all options
-            const optionButtons = document.querySelectorAll('.option');
-            optionButtons.forEach(button => {
-                button.disabled = true;
-                
-                // Highlight correct answer
-                if (button.textContent == correctAnswer) {
-                    button.style.backgroundColor = '#27ae60';
-                }
-                
-                // Highlight incorrect selection
-                if (button.textContent === selectedOption && !isCorrect) {
-                    button.style.backgroundColor = '#e74c3c';
-                }
-            });
-            
-            // Update feedback
-            if (isCorrect) {
-                feedbackElement.textContent = 'Correct!';
-                feedbackElement.className = 'feedback correct';
-                score++;
-                scoreElement.textContent = score;
-            } else {
-                feedbackElement.textContent = `Incorrect. The correct answer is ${correctAnswer}.`;
-                feedbackElement.className = 'feedback incorrect';
-            }
-            
-            // Show element info
-            elementInfo.classList.remove('hidden');
-            showElementInfo(currentElement, elementInfo);
-            
-            // Enable next button
-            nextButton.disabled = false;
-        }
-        
-        // Utility function to shuffle an array
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const playAgainButton = document.getElementById('play-again-btn');
+        const studyButtonGameOver = document.getElementById('study-btn-gameover'); // New study button on game over screen
+        const studyTableBody = document.getElementById('study-table-body'); // Table body for study mode
+        const backToMainButton = document.getElementById('back-to-main-btn'); // Button to go back from study mode
+
+        // Game State Variables
+        let shuffledElements = [];
+        let currentElementIndex = 0;
+        let currentGivenProperty;
+        let currentRequiredProperty;
+        let score = 0;
+        let timeLeft = 60; // seconds
+        let gameInterval;
+        const properties = ['name', 'symbol', 'number', 'mass'];
+        let answerChecked = false; // Flag to indicate if the current answer has been processed
+
+        /**
+         * Utility function to shuffle an array in place (Fisher-Yates algorithm).
+         * @param {Array} array The array to shuffle.
+         * @returns {Array} The shuffled array.
+         */
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
             }
             return array;
         }
-        
-        // Start the game
-        init();
+
+        /**
+         * Shows a specific screen and hides others.
+         * @param {HTMLElement} screenToShow The screen element to display.
+         */
+        function showScreen(screenToShow) {
+            [startScreen, gamePlayScreen, gameOverScreen, studyScreen].forEach(screen => {
+                screen.classList.add('hidden');
+                screen.style.display = 'none'; // Ensure display is none for hidden screens
+            });
+            screenToShow.classList.remove('hidden');
+            screenToShow.style.display = 'flex'; // Ensure it's flex for layout
+        }
+
+        /**
+         * Initializes the game by resetting scores, shuffling elements, and starting the timer.
+         */
+        function initializeGame() {
+            score = 0;
+            timeLeft = 180;
+            currentElementIndex = 0;
+            shuffledElements = shuffleArray([...elements]); // Shuffle elements for new game
+            scoreDisplay.textContent = score;
+            timerDisplay.textContent = timeLeft;
+            feedbackMessage.classList.add('hidden');
+            userInput.value = '';
+            userInput.disabled = false; // Enable input
+            answerChecked = false; // Reset answer checked flag
+            nextButton.disabled = true; // Next button only enabled after answer is processed
+
+            showScreen(gamePlayScreen);
+            startTimer();
+            showQuestion();
+        }
+
+        /**
+         * Starts the game timer.
+         */
+        function startTimer() {
+            clearInterval(gameInterval); // Clear any existing timer
+            gameInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(gameInterval);
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        /**
+         * Displays a new question based on randomly selected properties.
+         */
+        function showQuestion() {
+            if (currentElementIndex >= shuffledElements.length) {
+                // If all elements are used, reshuffle for continuous play
+                shuffledElements = shuffleArray([...elements]);
+                currentElementIndex = 0;
+            }
+
+            const currentElement = shuffledElements[currentElementIndex];
+
+            // Randomly select two different properties
+            let prop1Index = Math.floor(Math.random() * properties.length);
+            let prop2Index = Math.floor(Math.random() * properties.length);
+            while (prop1Index === prop2Index) {
+                prop2Index = Math.floor(Math.random() * properties.length);
+            }
+
+            currentGivenProperty = properties[prop1Index];
+            currentRequiredProperty = properties[prop2Index];
+
+            let questionPrompt = '';
+            let givenValue = currentElement[currentGivenProperty];
+
+            // Format given value for display
+            if (currentGivenProperty === 'name') {
+                questionPrompt = `What is the ${currentRequiredProperty} for "${givenValue}"?`;
+            } else if (currentGivenProperty === 'symbol') {
+                questionPrompt = `What is the ${currentRequiredProperty} for symbol "${givenValue.toUpperCase()}"?`;
+            } else if (currentGivenProperty === 'number') {
+                questionPrompt = `What is the ${currentRequiredProperty} for atomic number "${givenValue}"?`;
+            } else if (currentGivenProperty === 'mass') {
+                questionPrompt = `What is the ${currentRequiredProperty} for atomic mass "${givenValue}"?`;
+            }
+
+            questionDisplay.textContent = questionPrompt;
+            userInput.value = '';
+            feedbackMessage.classList.add('hidden');
+            feedbackMessage.classList.remove('feedback-correct', 'feedback-incorrect');
+            userInput.disabled = false; // Enable input for new question
+            answerChecked = false; // Reset answer checked flag
+            nextButton.disabled = true; // Disable next until answer is processed
+            userInput.focus(); // Focus on the input field for quick typing
+        }
+
+        /**
+         * Processes the user's typed answer, checks it, and provides feedback.
+         */
+        function processAnswer() {
+            if (answerChecked) return; // Prevent multiple checks for the same question
+
+            const currentElement = shuffledElements[currentElementIndex];
+            const userAnswer = userInput.value.trim();
+            let isCorrect = false;
+            let correctAnswer = currentElement[currentRequiredProperty];
+
+            // Handle different types of answers (case-insensitive for strings, number for numbers)
+            if (typeof correctAnswer === 'string') {
+                isCorrect = (userAnswer.toLowerCase() === correctAnswer.toLowerCase());
+            } else if (typeof correctAnswer === 'number') {
+                // Allow for slight variations if user types decimal for whole number mass, or vice versa
+                isCorrect = (parseFloat(userAnswer) === correctAnswer);
+            }
+
+            if (isCorrect) {
+                score += 10; // Award points for correct answer
+                feedbackMessage.textContent = "Correct! +10 points!";
+                feedbackMessage.classList.remove('feedback-incorrect');
+                feedbackMessage.classList.add('feedback-correct');
+            } else {
+                feedbackMessage.textContent = `Incorrect. The correct answer was: "${correctAnswer}"`;
+                feedbackMessage.classList.remove('feedback-correct');
+                feedbackMessage.classList.add('feedback-incorrect');
+                score = Math.max(0, score - 5); // Deduct points for incorrect answer, but not below zero
+            }
+
+            scoreDisplay.textContent = score;
+            feedbackMessage.classList.remove('hidden');
+            userInput.disabled = true; // Disable input after answer
+            answerChecked = true; // Set flag
+            nextButton.disabled = false; // Enable next button
+            nextButton.focus(); // Focus on next button
+        }
+
+        /**
+         * Ends the game and displays the final score.
+         */
+        function endGame() {
+            clearInterval(gameInterval); // Stop the timer
+            showScreen(gameOverScreen);
+            finalScoreDisplay.textContent = score;
+        }
+
+        /**
+         * Populates and displays the study screen with element data.
+         */
+        function showStudyScreen() {
+            showScreen(studyScreen);
+            studyTableBody.innerHTML = ''; // Clear previous content
+
+            // Shuffle elements for study mode too, for varied display
+            const shuffledStudyElements = shuffleArray([...elements]);
+
+            shuffledStudyElements.forEach(element => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${element.name}</td>
+                    <td>${element.symbol}</td>
+                    <td>${element.number}</td>
+                    <td>${element.mass}</td>
+                `;
+                studyTableBody.appendChild(row);
+            });
+        }
+
+        // Event Listeners
+        startButton.addEventListener('click', initializeGame);
+        studyButtonStart.addEventListener('click', showStudyScreen); // Study button on start screen
+
+        nextButton.addEventListener('click', () => {
+            currentElementIndex++; // Move to next element
+            showQuestion();
+        });
+
+        playAgainButton.addEventListener('click', initializeGame);
+        studyButtonGameOver.addEventListener('click', showStudyScreen); // Study button on game over screen
+        backToMainButton.addEventListener('click', () => showScreen(startScreen)); // Back to main from study
+
+        // Auto-check on Enter key press
+        userInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                if (!answerChecked) { // Only process if answer hasn't been checked yet
+                    processAnswer();
+                } else { // If answer is already checked, pressing Enter again goes to next question
+                    currentElementIndex++;
+                    showQuestion();
+                }
+            }
+        });
+
+        // Initial setup on load (show start screen)
+        window.onload = function() {
+            showScreen(startScreen);
+        };
     </script>
 </body>
 </html>
+
