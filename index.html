@@ -162,7 +162,7 @@
         <!-- Start Screen -->
         <div id="start-screen" class="flex flex-col items-center gap-6">
             <p class="text-lg text-gray-600">Quickly type the correct atomic property for the given element!</p>
-            <p class="text-md text-gray-500">You have 60 seconds to answer as many as you can.</p>
+            <p class="text-md text-gray-500">You have 180 seconds to answer as many as you can.</p>
             <div class="flex flex-col sm:flex-row gap-4 w-full max-w-xs">
                 <button id="start-game-btn" class="btn-primary flex-1">Start Game</button>
                 <button id="study-btn-start" class="btn-secondary flex-1">Study</button>
@@ -291,7 +291,7 @@
         let currentGivenProperty;
         let currentRequiredProperty;
         let score = 0;
-        let timeLeft = 60; // seconds
+        let timeLeft = 180; // seconds
         let gameInterval;
         const properties = ['name', 'symbol', 'number', 'mass'];
         let answerChecked = false; // Flag to indicate if the current answer has been processed
