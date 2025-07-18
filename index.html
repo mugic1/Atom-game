@@ -6,6 +6,8 @@
     <title>Atomic Challenge: Type & Match</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
     <style>
         /* Custom styles for better aesthetics and responsiveness */
         body {
@@ -325,7 +327,7 @@
          */
         function initializeGame() {
             score = 0;
-            timeLeft = 180;
+            timeLeft = 60;
             currentElementIndex = 0;
             shuffledElements = shuffleArray([...elements]); // Shuffle elements for new game
             scoreDisplay.textContent = score;
@@ -496,6 +498,19 @@
                 }
             }
         });
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Service Worker registration failed:', error);
+                    });
+            });
+        }
 
         // Initial setup on load (show start screen)
         window.onload = function() {
