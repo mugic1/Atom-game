@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atomic Elements Quiz</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better aesthetics and responsiveness */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .game-container {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px; /* Max width for larger screens */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; /* Space between sections */
+        }
+        input[type="text"], input[type="number"] {
+            padding: 0.75rem 1rem;
+            border: 2px solid #cbd5e1; /* Light gray border */
+            border-radius: 0.75rem; /* Rounded input fields */
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #6366f1; /* Indigo focus color */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); /* Soft focus shadow */
+        }
+        button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        .btn-primary {
+            background-color: #6366f1; /* Indigo */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4f46e5; /* Darker indigo */
+        }
+        .btn-secondary {
+            background-color: #e2e8f0; /* Light gray */
+            color: #475569; /* Slate gray */
+        }
+        .btn-secondary:hover {
+            background-color: #cbd5e1; /* Darker light gray */
+        }
+        .feedback-message {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            text-align: left;
+        }
+        .feedback-correct {
+            background-color: #d1fae5; /* Light green */
+            color: #065f46; /* Dark green */
+        }
+        .feedback-incorrect {
+            background-color: #fee2e2; /* Light red */
+            color: #991b1b; /* Dark red */
+        }
+        .feedback-partial {
+            background-color: #fef3c7; /* Light yellow */
+            color: #92400e; /* Dark yellow */
+        }
+        .correct-answer {
+            font-weight: bold;
+            color: #065f46; /* Dark green */
+        }
+        .incorrect-answer {
+            font-weight: bold;
+            color: #991b1b; /* Dark red */
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        .game-over-screen {
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="game-container" class="game-container">
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-4">Atomic Elements Quiz</h1>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="flex flex-col items-center gap-6">
+            <p class="text-lg text-gray-600">Test your knowledge of the first 30 elements!</p>
+            <button id="start-game-btn" class="btn-primary w-full max-w-xs">Start Game</button>
+        </div>
+
+        <!-- Game Play Screen -->
+        <div id="game-play-screen" class="hidden flex-col gap-4">
+            <div class="text-xl font-semibold text-gray-700 mb-2">
+                Element: <span id="element-name" class="text-indigo-600 text-2xl font-bold"></span>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label for="atomic-symbol" class="block text-gray-600 text-sm font-medium mb-1 text-left">Atomic Symbol:</label>
+                    <input type="text" id="atomic-symbol" placeholder="e.g., H" class="uppercase">
+                </div>
+                <div>
+                    <label for="atomic-number" class="block text-gray-600 text-sm font-medium mb-1 text-left">Atomic Number:</label>
+                    <input type="number" id="atomic-number" placeholder="e.g., 1">
+                </div>
+                <div>
+                    <label for="atomic-mass" class="block text-gray-600 text-sm font-medium mb-1 text-left">Atomic Mass:</label>
+                    <input type="number" step="0.001" id="atomic-mass" placeholder="e.g., 1.008">
+                </div>
+            </div>
+
+            <div id="feedback-message" class="feedback-message hidden"></div>
+
+            <div class="flex flex-col sm:flex-row gap-4 mt-4">
+                <button id="check-btn" class="btn-primary flex-1">Check Answer</button>
+                <button id="next-btn" class="btn-secondary flex-1" disabled>Next Element</button>
+            </div>
+
+            <div class="text-lg font-medium text-gray-700 mt-4">
+                Score: <span id="score" class="text-indigo-600 font-bold">0</span> / <span id="total-questions" class="text-gray-500">0</span>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="game-over-screen">
+            <h2 class="text-2xl font-bold text-gray-800">Game Over!</h2>
+            <p class="text-lg text-gray-600">You've completed all 30 elements.</p>
+            <p class="text-xl font-bold text-gray-700">Your Final Score: <span id="final-score" class="text-indigo-600">0</span> / 30</p>
+            <button id="play-again-btn" class="btn-primary w-full max-w-xs mt-4">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Array containing data for the first 30 elements (Hydrogen to Zinc)
+        const elements = [
+            { name: "Hydrogen", symbol: "H", number: 1, mass: 1.008 },
+            { name: "Helium", symbol: "He", number: 2, mass: 4.0026 },
+            { name: "Lithium", symbol: "Li", number: 3, mass: 6.94 },
+            { name: "Beryllium", symbol: "Be", number: 4, mass: 9.0122 },
+            { name: "Boron", symbol: "B", number: 5, mass: 10.81 },
+            { name: "Carbon", symbol: "C", number: 6, mass: 12.011 },
+            { name: "Nitrogen", symbol: "N", number: 7, mass: 14.007 },
+            { name: "Oxygen", symbol: "O", number: 8, mass: 15.999 },
+            { name: "Fluorine", symbol: "F", number: 9, mass: 18.998 },
+            { name: "Neon", symbol: "Ne", number: 10, mass: 20.180 },
+            { name: "Sodium", symbol: "Na", number: 11, mass: 22.990 },
+            { name: "Magnesium", symbol: "Mg", number: 12, mass: 24.305 },
+            { name: "Aluminum", symbol: "Al", number: 13, mass: 26.982 },
+            { name: "Silicon", symbol: "Si", number: 14, mass: 28.085 },
+            { name: "Phosphorus", symbol: "P", number: 15, mass: 30.974 },
+            { name: "Sulfur", symbol: "S", number: 16, mass: 32.06 },
+            { name: "Chlorine", symbol: "Cl", number: 17, mass: 35.45 },
+            { name: "Argon", symbol: "Ar", number: 18, mass: 39.948 },
+            { name: "Potassium", symbol: "K", number: 19, mass: 39.098 },
+            { name: "Calcium", symbol: "Ca", number: 20, mass: 40.078 },
+            { name: "Scandium", symbol: "Sc", number: 21, mass: 44.956 },
+            { name: "Titanium", symbol: "Ti", number: 22, mass: 47.867 },
+            { name: "Vanadium", symbol: "V", number: 23, mass: 50.942 },
+            { name: "Chromium", symbol: "Cr", number: 24, mass: 51.996 },
+            { name: "Manganese", symbol: "Mn", number: 25, mass: 54.938 },
+            { name: "Iron", symbol: "Fe", number: 26, mass: 55.845 },
+            { name: "Cobalt", symbol: "Co", number: 27, mass: 58.933 },
+            { name: "Nickel", symbol: "Ni", number: 28, mass: 58.693 },
+            { name: "Copper", symbol: "Cu", number: 29, mass: 63.546 },
+            { name: "Zinc", symbol: "Zn", number: 30, mass: 65.38 }
+        ];
+
+        // DOM Elements
+        const startScreen = document.getElementById('start-screen');
+        const gamePlayScreen = document.getElementById('game-play-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const startButton = document.getElementById('start-game-btn');
+        const elementNameDisplay = document.getElementById('element-name');
+        const atomicSymbolInput = document.getElementById('atomic-symbol');
+        const atomicNumberInput = document.getElementById('atomic-number');
+        const atomicMassInput = document.getElementById('atomic-mass');
+        const checkButton = document.getElementById('check-btn');
+        const nextButton = document.getElementById('next-btn');
+        const scoreDisplay = document.getElementById('score');
+        const totalQuestionsDisplay = document.getElementById('total-questions');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const playAgainButton = document.getElementById('play-again-btn');
+
+        // Game State Variables
+        let currentElementIndex;
+        let score = 0;
+        let questionsAnswered = 0;
+        let availableElements = []; // To keep track of elements not yet asked
+        const massTolerance = 0.5; // Allowed deviation for atomic mass
+
+        /**
+         * Initializes the game by resetting scores, shuffling elements, and displaying the first question.
+         */
+        function initializeGame() {
+            score = 0;
+            questionsAnswered = 0;
+            // Create a copy of the elements array and shuffle it
+            availableElements = [...elements].sort(() => Math.random() - 0.5);
+            scoreDisplay.textContent = score;
+            totalQuestionsDisplay.textContent = elements.length; // Total elements to be asked
+            feedbackMessage.classList.add('hidden'); // Hide feedback initially
+            nextButton.disabled = true; // Disable next button until checked
+            checkButton.disabled = false; // Enable check button
+            showQuestion(); // Display the first question
+            atomicSymbolInput.value = '';
+            atomicNumberInput.value = '';
+            atomicMassInput.value = '';
+
+            // Show game play screen and hide others
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            gamePlayScreen.classList.remove('hidden');
+            gamePlayScreen.style.display = 'flex'; // Ensure it's flex for layout
+        }
+
+        /**
+         * Displays a new element's name for the user to guess its properties.
+         */
+        function showQuestion() {
+            if (availableElements.length === 0) {
+                endGame(); // All elements have been asked
+                return;
+            }
+
+            // Get the next element from the shuffled list
+            currentElementIndex = elements.indexOf(availableElements.pop());
+            const element = elements[currentElementIndex];
+
+            elementNameDisplay.textContent = element.name;
+            atomicSymbolInput.value = '';
+            atomicNumberInput.value = '';
+            atomicMassInput.value = '';
+            feedbackMessage.classList.add('hidden');
+            feedbackMessage.classList.remove('feedback-correct', 'feedback-incorrect', 'feedback-partial');
+            checkButton.disabled = false;
+            nextButton.disabled = true;
+            atomicSymbolInput.focus(); // Focus on the first input field
+        }
+
+        /**
+         * Checks the user's input against the correct atomic properties.
+         */
+        function checkAnswer() {
+            const element = elements[currentElementIndex];
+            const userSymbol = atomicSymbolInput.value.trim().toUpperCase();
+            const userNumber = parseInt(atomicNumberInput.value);
+            const userMass = parseFloat(atomicMassInput.value);
+
+            let correctSymbol = false;
+            let correctNumber = false;
+            let correctMass = false;
+
+            let feedbackText = '';
+            let isOverallCorrect = true;
+
+            // Check Atomic Symbol
+            if (userSymbol === element.symbol.toUpperCase()) {
+                correctSymbol = true;
+                feedbackText += `Symbol: <span class="correct-answer">${element.symbol} (Correct)</span><br>`;
+            } else {
+                isOverallCorrect = false;
+                feedbackText += `Symbol: <span class="incorrect-answer">Incorrect. Correct is ${element.symbol}</span><br>`;
+            }
+
+            // Check Atomic Number
+            if (userNumber === element.number) {
+                correctNumber = true;
+                feedbackText += `Number: <span class="correct-answer">${element.number} (Correct)</span><br>`;
+            } else {
+                isOverallCorrect = false;
+                feedbackText += `Number: <span class="incorrect-answer">Incorrect. Correct is ${element.number}</span><br>`;
+            }
+
+            // Check Atomic Mass with tolerance
+            if (!isNaN(userMass) && Math.abs(userMass - element.mass) <= massTolerance) {
+                correctMass = true;
+                feedbackText += `Mass: <span class="correct-answer">${element.mass.toFixed(3)} (Correct)</span><br>`;
+            } else {
+                isOverallCorrect = false;
+                feedbackText += `Mass: <span class="incorrect-answer">Incorrect. Correct is ${element.mass.toFixed(3)}</span><br>`;
+            }
+
+            // Update score and feedback message
+            feedbackMessage.innerHTML = feedbackText;
+            feedbackMessage.classList.remove('hidden');
+
+            if (isOverallCorrect) {
+                score++;
+                feedbackMessage.classList.remove('feedback-incorrect', 'feedback-partial');
+                feedbackMessage.classList.add('feedback-correct');
+            } else if (correctSymbol || correctNumber || correctMass) {
+                feedbackMessage.classList.remove('feedback-correct', 'feedback-incorrect');
+                feedbackMessage.classList.add('feedback-partial');
+            } else {
+                feedbackMessage.classList.remove('feedback-correct', 'feedback-partial');
+                feedbackMessage.classList.add('feedback-incorrect');
+            }
+
+            scoreDisplay.textContent = score;
+            questionsAnswered++;
+            totalQuestionsDisplay.textContent = questionsAnswered; // Update questions answered count
+
+            checkButton.disabled = true; // Disable check button after checking
+            nextButton.disabled = false; // Enable next button
+        }
+
+        /**
+         * Ends the game and displays the final score.
+         */
+        function endGame() {
+            gamePlayScreen.classList.add('hidden');
+            gameOverScreen.classList.remove('hidden');
+            gameOverScreen.style.display = 'flex'; // Ensure it's flex for layout
+            finalScoreDisplay.textContent = score;
+        }
+
+        // Event Listeners
+        startButton.addEventListener('click', initializeGame);
+        checkButton.addEventListener('click', checkAnswer);
+        nextButton.addEventListener('click', showQuestion);
+        playAgainButton.addEventListener('click', initializeGame);
+
+        // Allow pressing Enter to check answer
+        atomicSymbolInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !checkButton.disabled) {
+                checkAnswer();
+            }
+        });
+        atomicNumberInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !checkButton.disabled) {
+                checkAnswer();
+            }
+        });
+        atomicMassInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !checkButton.disabled) {
+                checkAnswer();
+            }
+        });
+
+        // Initial setup on load (show start screen)
+        window.onload = function() {
+            startScreen.classList.remove('hidden');
+            startScreen.style.display = 'flex'; // Ensure it's flex for layout
+            gamePlayScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+        };
+    </script>
+</body>
+</html>
+
