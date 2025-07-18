@@ -19,6 +19,7 @@
         h1 {
             color: #2c3e50;
             margin-bottom: 10px;
+            text-align: center;
         }
         
         .game-container {
@@ -135,6 +136,7 @@
             display: flex;
             justify-content: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
         
         .mode-btn {
@@ -144,6 +146,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            white-space: nowrap;
         }
         
         .mode-btn.active {
@@ -151,12 +154,17 @@
             font-weight: bold;
         }
         
+        .periodic-table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+        
         .periodic-table {
             display: grid;
-            grid-template-columns: repeat(18, 1fr);
+            grid-template-columns: repeat(18, minmax(30px, 1fr));
             gap: 3px;
             margin-top: 20px;
-            max-width: 900px;
+            min-width: 540px; /* Minimum width for 18 columns */
         }
         
         .element {
@@ -166,6 +174,10 @@
             background-color: #e0f7fa;
             cursor: pointer;
             transition: transform 0.2s;
+            min-height: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .element:hover {
@@ -173,26 +185,57 @@
             box-shadow: 0 0 5px rgba(0,0,0,0.2);
         }
         
-        .element.symbol {
+        .element .symbol {
             font-weight: bold;
-            font-size: 1.2em;
+            font-size: 1em;
+            line-height: 1.2;
         }
         
-        .element.number {
-            font-size: 0.7em;
-        }
-        
-        .element.name {
+        .element .number {
             font-size: 0.6em;
+            line-height: 1.2;
+        }
+        
+        .element .name {
+            font-size: 0.5em;
+            line-height: 1.2;
+            display: none; /* Hidden by default, shown on larger screens */
         }
         
         .hidden {
             display: none;
         }
         
-        @media (max-width: 768px) {
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .element .name {
+                display: block;
+            }
+            .element {
+                min-height: 60px;
+            }
+        }
+        
+        @media (max-width: 767px) {
             .options {
                 grid-template-columns: 1fr;
+            }
+            .periodic-table {
+                grid-template-columns: repeat(18, minmax(25px, 1fr));
+                font-size: 0.9em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .game-container {
+                padding: 15px;
+            }
+            .question {
+                font-size: 20px;
+            }
+            .periodic-table {
+                grid-template-columns: repeat(18, minmax(20px, 1fr));
+                font-size: 0.8em;
             }
         }
     </style>
@@ -229,7 +272,9 @@
     
     <div id="periodic-table-container" class="game-container hidden">
         <h2>Periodic Table (First 30 Elements)</h2>
-        <div class="periodic-table" id="periodic-table"></div>
+        <div class="periodic-table-container">
+            <div class="periodic-table" id="periodic-table"></div>
+        </div>
         <div class="element-info" id="table-element-info"></div>
     </div>
     
@@ -338,6 +383,7 @@
         // Set up the periodic table view
         function setupPeriodicTable() {
             const periodicTable = document.getElementById('periodic-table');
+            periodicTable.innerHTML = '';
             
             // Create cells for all 118 elements, but only fill the first 30
             for (let i = 0; i < 118; i++) {
